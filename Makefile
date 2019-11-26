@@ -12,12 +12,14 @@ server: $(PY) $(MODULE).py $(MODULE).ini
 .PHONY: install update requirements.txt wiki
 
 install: doc $(PI) $(PIP)
-$(PIP):
-	sudo apt install -u `cat apt.txt`
 	git clone -o gh git@github.com:ponyatov/uPicat.wiki.git wiki
 	$(MAKE) update
 
-update:
+$(PIP):
+	sudo apt install -u `cat apt.txt`
+	python3 -m venv $(CWD)
+
+update: $(PIP)
 	$(PIP) install -U pip
 	$(PIP) install -U -r requirements.txt
 	$(MAKE) requirements.txt
