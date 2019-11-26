@@ -20,6 +20,7 @@ $(PIP):
 	python3 -m venv $(CWD)
 
 update: $(PIP)
+	git pull -v
 	$(PIP) install -U pip
 	$(PIP) install -U -r requirements.txt
 	$(MAKE) requirements.txt
