@@ -6,16 +6,37 @@ PY  = $(CWD)/bin/python3
 PIP = $(CWD)/bin/pip3
 PI  = $(CWD)/Picat/picat
 
-install: doc
-	sudo apt install -u `cat apt.txt`
-	$(PIP) install -U pip
-	$(PIP) install -U flask ply graphviz
-	$(MAKE) requirements.txt
+server: $(PY) $(MODULE).py $(MODULE).ini
+	$^
 
-.PHONY: install requirements.txt
+.PHONY: install update requirements.txt wiki
+
+install: doc $(PI) $(PIP)
+$(PIP):
+	sudo apt install -u `cat apt.txt`
+	git clone -o gh git@github.com:ponyatov/uPicat.wiki.git wiki
+	$(MAKE) update
+
+update:
+	$(PIP) install -U pip
+	$(PIP) install -U -r requirements.txt
+	$(MAKE) requirements.txt
+	$(MAKE) wiki
+
+wiki:
+	cd wiki ; git pull -v
 
 requirements.txt:
 	$(PIP) freeze | grep -v 0.0.0 > $@
+
+PI_VER = 27b12
+PI_GZ  = picat$(PI_VER)_linux64.tar.gz
+PI_SRC = picat$(PI_VER)_src.tar.gz
+
+$(PI): /tmp/$(PI_GZ)
+	tar zx < $< && touch $@
+/tmp/$(PI_GZ):
+	wget -c -O $@ http://picat-lang.org/download/$(PI_GZ)
 
 doc: doc/book.pdf doc/manual.pdf
 doc/book.pdf:

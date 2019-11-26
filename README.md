@@ -7,6 +7,11 @@ This is a demo course on Picat programming language implemented on top of the uL
 
 * first lesson: [0000 What is Picat language?](https://github.com/ponyatov/uPicat/wiki/0000-What-is-Picat-language%3F)
 * GitHub: https://github.com/ponyatov/uPicat
+* Picat official site: http://picat-lang.org
+  * discussion on Google groups: https://groups.google.com/forum/#!topic/picat-lang/5YPGEVebeoI
+  * [A User’s Guide to Picat Version 2.7b12](https://github.com/ponyatov/uPicat/releases/download/261119-1411/manual.pdf)
+  * [Constraint Solving and Planning with Picat](https://github.com/ponyatov/uPicat/releases/download/261119-1411/book.pdf) (c) Neng-Fa Zhou, Håkan Kjellerstrand, Jonathan Fruhman
+    * [An Introduction to Tabled Logic Programming with Picat](https://www.linuxjournal.com/content/introduction-tabled-logic-programming-picat) (c) Sergii Dymchenko
 
 #### MIT License
 

@@ -1,2 +1,3 @@
+wget
 python3
 graphviz

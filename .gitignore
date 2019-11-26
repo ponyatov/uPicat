@@ -10,3 +10,5 @@ lib64
 share/
 pyvenv.cfg
 
+wiki/
+Picat/
