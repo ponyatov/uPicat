@@ -1,5 +1,6 @@
 
 import os,sys
+from math import log10
 
 MODULE = sys.argv[0].split('/')[-1][:-3]
 INI    = sys.argv[0][:-3]+'.ini'
@@ -28,9 +29,10 @@ class Frame:
         for i in self.slot:
             tree += self.slot[i].dump(depth+1,'%s = '%i)
         # nest[]ed
+        signs = '{:>%i} '%(log10(len(self.nest)+1)+1)
         idx = 0
         for j in self.nest:
-            tree += j.dump(depth+1,'%s: '%idx) ; idx += 1
+            tree += j.dump(depth+1,signs.format(idx)) ; idx += 1
         # substreeng
         return tree
     def head(self,prefix=''):
