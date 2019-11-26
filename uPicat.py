@@ -1,8 +1,8 @@
 
 import os,sys
 
-MODULE = sys.argv[0].split('/')[-1]
-INI    = sys.argv[0][-3:]+'.ini'
+MODULE = sys.argv[0].split('/')[-1][:-3]
+INI    = sys.argv[0][:-3]+'.ini'
 
 ## homoiconic frame system
 
@@ -18,7 +18,20 @@ class Frame:
 
     def __repr__(self): return self.dump()
     def dump(self,depth=0,prefix=''):
+        # header
         tree = self._pad(depth) + self.head(prefix)
+        # block infinitive recursion
+        if not depth: Frame._dump = []
+        if self in Frame._dump: return tree + ' _/'
+        else: Frame._dump.append(self)
+        # slot{}s
+        for i in self.slot:
+            tree += self.slot[i].dump(depth+1,'%s = '%i)
+        # nest[]ed
+        idx = 0
+        for j in self.nest:
+            tree += j.dump(depth+1,'%s: '%idx) ; idx += 1
+        # substreeng
         return tree
     def head(self,prefix=''):
         return '%s<%s:%s> @%x' % (prefix,self.type,self._val(),id(self))
@@ -47,7 +60,16 @@ class Frame:
 class Primitive(Frame): pass
 
 class Symbol(Primitive): pass
-class String(Primitive): pass
+
+class String(Primitive):
+    def _val(self):
+        s = ''
+        for c in self.val:
+            if    c == '\t': s += r'\t'
+            elif  c == '\r': s += r'\r'
+            elif  c == '\n': s += r'\n'
+            else: s+= c
+        return s
 
 class Active(Frame): pass
 
@@ -59,6 +81,18 @@ class Cmd(Active):
         self.fn = F
     def eval(self,ctx):
         self.fn(ctx)
+
+class IO(Frame): pass
+class Dir(IO): pass
+
+class File(IO):
+    def __init__(self,V):
+        IO.__init__(self,V)
+        try:
+            with open(V) as data:
+                for i in data.readlines():
+                    self // String(i)
+        except: pass
 
 ## global virtual machine
 
@@ -110,6 +144,7 @@ def INTERP(ctx):
 ## system .ini
 
 if __name__ == '__main__':
+    vm['README.md'] = File('README.md')
     for i in sys.argv[1:]:
         with open(i) as src:
             vm // String(src.read()) ; INTERP(vm)
@@ -119,4 +154,17 @@ if __name__ == '__main__':
 import flask
 
 web = flask.Flask(__name__)
+
+@web.route('/')
+def index():
+    return flask.render_template('index.html',vm=vm)
+
+@web.route('/<path:path>.css')
+def css(path):
+    return web.send_static_file(path+'.css')
+
+@web.route('/<path:path>.png')
+def png(path):
+    return web.send_static_file(path+'.png')
+
 web.run(host=vm['HOST'].val,port=vm['PORT'].val,debug=True,extra_files=[INI])
