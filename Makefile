@@ -50,6 +50,7 @@ doc/manual.pdf:
 MERGE  = Makefile README.md .gitignore
 MERGE += $(MODULE).py $(MODULE).ini requirements.txt apt.txt
 MERGE += doc
+MERGE += static templates
 
 merge:
 	git checkout master
